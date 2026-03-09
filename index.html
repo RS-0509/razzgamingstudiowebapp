@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Razz Gaming Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{
+--bg:#09090b;--sf:#111114;--el:#19191f;--bd:rgba(255,255,255,.06);--bdl:rgba(255,255,255,.1);
+--g:#c8a84c;--gl:#e2cc7a;--gd:rgba(200,168,76,.12);--gg:rgba(200,168,76,.2);
+--ac:#6c5ce7;--acd:rgba(108,92,231,.12);--r:#e74c3c;--rd:rgba(231,76,60,.1);
+--gr:#27ae60;--grd:rgba(39,174,96,.12);
+--t:#f0eff4;--t2:#9896a8;--t3:#55536a;
+--R:16px;--Rs:12px;
+--f:'Inter',-apple-system,sans-serif;--fd:'DM Sans','Inter',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--f);background:var(--bg);color:var(--t);min-height:100vh;position:relative;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:0;height:0}
+button{font-family:var(--fd);cursor:pointer;border:none;outline:none}
+input{font-family:var(--f);outline:none}
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes glow{0%,100%{box-shadow:0 0 30px var(--gg)}50%{box-shadow:0 0 60px var(--gg),0 0 90px rgba(200,168,76,.08)}}
+@keyframes dotPulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes gradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes checkPop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+
+.anim-up{animation:fadeUp .5s ease-out both}
+.anim-in{animation:fadeIn .4s ease-out both}
+.anim-slide{animation:slideIn .5s ease-out both}
+.anim-scale{animation:scaleIn .4s ease-out both}
+.d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}
+.d4{animation-delay:.2s}.d5{animation-delay:.25s}.d6{animation-delay:.3s}
+
+/* ═══ SPLASH ═══ */
+#splash{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s,visibility .8s}
+#splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+#splash .slogo{width:80px;height:80px;border-radius:22px;background:linear-gradient(135deg,var(--g),#b8943f);display:flex;align-items:center;justify-content:center;margin-bottom:28px;animation:glow 2.5s infinite,fadeUp .8s ease-out}
+#splash h1{font-family:var(--fd);font-size:42px;font-weight:800;color:var(--g);letter-spacing:6px;margin-bottom:6px;animation:fadeUp .8s ease-out .15s both}
+#splash p{color:var(--t3);font-size:11px;letter-spacing:6px;text-transform:uppercase;animation:fadeUp .8s ease-out .25s both}
+#splash .sbar{width:120px;height:2px;background:var(--el);border-radius:1px;margin-top:32px;overflow:hidden;animation:fadeIn 1s ease-out .5s both}
+#splash .sbar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--gl));border-radius:1px;transition:width 1.5s ease-in-out}
+
+/* ═══ LOGIN/ONBOARDING ═══ */
+#loginScreen{position:fixed;inset:0;z-index:200;background:var(--bg);display:none;flex-direction:column;overflow:hidden}
+#loginScreen.show{display:flex}
+.login-bg{position:absolute;inset:0;overflow:hidden}
+.login-bg .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.15}
+.login-bg .orb1{width:300px;height:300px;background:var(--g);top:-50px;right:-80px;animation:float 6s ease-in-out infinite}
+.login-bg .orb2{width:200px;height:200px;background:var(--ac);bottom:100px;left:-60px;animation:float 8s ease-in-out infinite 1s}
+.login-content{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;padding:0 28px}
+.login-top{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.login-logo{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--g),#b8943f);display:flex;align-items:center;justify-content:center;margin-bottom:28px;box-shadow:0 12px 48px var(--gg)}
+.login-top h1{font-family:var(--fd);font-size:36px;font-weight:800;color:var(--g);letter-spacing:4px;margin-bottom:6px}
+.login-top .sub{color:var(--t3);font-size:12px;letter-spacing:4px;text-transform:uppercase;margin-bottom:40px}
+.login-top .tagline{color:var(--t2);font-size:15px;line-height:1.7;max-width:300px;margin-bottom:48px}
+.login-features{display:flex;gap:24px;justify-content:center;margin-bottom:48px}
+.login-feat{text-align:center}
+.login-feat .lf-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;border:1px solid var(--bd)}
+.login-feat .lf-label{color:var(--t2);font-size:11px;font-weight:500}
+.login-bottom{padding-bottom:40px}
+.login-input-group{margin-bottom:16px}
+.login-input{width:100%;padding:16px 18px;border-radius:14px;border:1px solid var(--bd);background:var(--sf);color:var(--t);font-size:15px;transition:border-color .2s}
+.login-input::placeholder{color:var(--t3)}
+.login-input:focus{border-color:var(--g)}
+.login-btn{width:100%;padding:16px;border-radius:14px;background:linear-gradient(135deg,var(--g),#b8943f);color:var(--bg);font-size:16px;font-weight:700;letter-spacing:.3px;box-shadow:0 8px 32px var(--gg);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.login-btn:active{transform:scale(.97)}
+.login-btn .btn-ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.3);width:10px;height:10px;animation:ripple .6s ease-out}
+.login-or{text-align:center;color:var(--t3);font-size:13px;margin:20px 0;position:relative}
+.login-or::before,.login-or::after{content:'';position:absolute;top:50%;width:calc(50% - 20px);height:1px;background:var(--bd)}
+.login-or::before{left:0}
+.login-or::after{right:0}
+.login-social{display:flex;gap:12px}
+.login-social button{flex:1;padding:14px;border-radius:14px;background:var(--sf);border:1px solid var(--bd);color:var(--t);font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:border-color .2s}
+.login-social button:hover{border-color:var(--bdl)}
+.login-skip{text-align:center;margin-top:20px}
+.login-skip button{background:none;color:var(--t3);font-size:13px;text-decoration:underline;text-underline-offset:3px}
+
+/* ═══ TOPBAR ═══ */
+.topbar{position:sticky;top:0;z-index:50;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;background:rgba(9,9,11,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);transition:transform .3s}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar-left .menu-btn{background:none;padding:0;display:flex;color:var(--t);transition:transform .2s}
+.topbar-left .menu-btn:active{transform:scale(.85)}
+.topbar-brand{font-family:var(--fd);font-size:18px;font-weight:800;color:var(--g);letter-spacing:3px}
+.topbar-right{display:flex;gap:8px}
+.topbar-icon{width:38px;height:38px;border-radius:var(--Rs);background:var(--sf);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;color:var(--t2);position:relative;transition:transform .15s,background .2s}
+.topbar-icon:active{transform:scale(.9)}
+.topbar-icon:hover{background:var(--el)}
+.notif-dot{position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--r)}
+
+/* ═══ DRAWER ═══ */
+.drawer-overlay{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:all .35s}
+.drawer-overlay.open{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;bottom:0;left:-290px;width:280px;z-index:100;background:var(--bg);border-right:1px solid var(--bd);display:flex;flex-direction:column;transition:left .35s cubic-bezier(.4,0,.2,1)}
+.drawer.open{left:0}
+.drawer-header{padding:28px 24px 20px;border-bottom:1px solid var(--bd)}
+.drawer-brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.drawer-brand .d-logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--g),#b8943f);display:flex;align-items:center;justify-content:center;color:var(--bg)}
+.d-brand-text h3{font-family:var(--fd);color:var(--g);font-size:18px;font-weight:800;letter-spacing:3px}
+.d-brand-text span{color:var(--t3);font-size:10px;letter-spacing:2px;text-transform:uppercase}
+.drawer-user{display:flex;align-items:center;gap:10px}
+.drawer-user .d-avatar{width:36px;height:36px;border-radius:10px;background:var(--el);display:flex;align-items:center;justify-content:center;color:var(--t2)}
+.du-name{color:var(--t);font-size:14px;font-weight:600}
+.du-tier{color:var(--g);font-size:11px;font-weight:600}
+.drawer-nav{flex:1;padding:12px 0;overflow-y:auto}
+.drawer-item{display:flex;align-items:center;gap:14px;padding:14px 24px;cursor:pointer;border-left:3px solid transparent;transition:all .2s;color:var(--t2);font-size:15px}
+.drawer-item:hover,.drawer-item.active{background:var(--gd);border-left-color:var(--g);color:var(--t)}
+.drawer-item.active .di-icon{color:var(--g)}
+.di-icon{color:var(--t3);transition:color .2s}
+.drawer-footer{padding:16px 24px;border-top:1px solid var(--bd)}
+.drawer-footer .df-item{display:flex;align-items:center;gap:14px;padding:10px 0;color:var(--t3);font-size:14px;cursor:pointer;transition:color .2s}
+.drawer-footer .df-item:hover{color:var(--t2)}
+
+/* ═══ PAGES ═══ */
+.page{display:none;padding:0 20px 100px;min-height:calc(100vh - 60px)}
+.page.active{display:block}
+.page-transition{animation:fadeUp .35s ease-out}
+.sec-title{margin-bottom:20px}
+.sec-title h2{font-family:var(--fd);font-size:22px;font-weight:700;letter-spacing:-.3px;color:var(--t)}
+.sec-title p{color:var(--t3);font-size:13px;margin-top:4px}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--R);padding:20px;transition:all .25s cubic-bezier(.4,0,.2,1)}
+.card.glow{border-color:rgba(200,168,76,.25);box-shadow:0 0 40px var(--gg)}
+.card.clickable{cursor:pointer}
+.card.clickable:hover{border-color:var(--bdl);transform:translateY(-2px)}
+.card.clickable:active{transform:translateY(0) scale(.98)}
+
+/* ═══ CHIPS ═══ */
+.chip{display:inline-block;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;font-family:var(--fd);letter-spacing:.8px;text-transform:uppercase}
+.cg{background:var(--gd);color:var(--g)}.cgr{background:var(--grd);color:var(--gr)}
+.ca{background:var(--acd);color:var(--ac)}.cr{background:var(--rd);color:var(--r)}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:14px;font-family:var(--fd);letter-spacing:.3px;transition:all .2s;position:relative;overflow:hidden}
+.btn:active{transform:scale(.97)}
+.btn-g{padding:14px 28px;background:linear-gradient(135deg,var(--g),#b8943f);color:var(--bg);font-size:15px;font-weight:700;box-shadow:0 8px 32px var(--gg);width:100%}
+.btn-g:disabled{background:var(--el);color:var(--t3);box-shadow:none;opacity:.4;cursor:not-allowed;transform:none}
+.btn-go{padding:14px 28px;background:transparent;border:1.5px solid var(--g);color:var(--g);font-size:15px;font-weight:700;width:100%}
+.btn-gs{padding:8px 18px;border-radius:10px;font-size:13px;background:linear-gradient(135deg,var(--g),#b8943f);color:var(--bg);font-weight:700}
+.btn-os{padding:8px 18px;border-radius:10px;font-size:13px;background:transparent;border:1.5px solid var(--g);color:var(--g);font-weight:700}
+
+/* ═══ PILLS ═══ */
+.pills{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:24px}
+.pill{padding:8px 20px;border-radius:100px;background:var(--el);color:var(--t2);font-size:13px;font-weight:600;font-family:var(--fd);white-space:nowrap;transition:all .25s}
+.pill.on{background:var(--g);color:var(--bg)}
+
+/* ═══ ICON BOXES ═══ */
+.ib{display:flex;align-items:center;justify-content:center;border-radius:14px;flex-shrink:0}
+.ib-l{width:52px;height:52px}.ib-m{width:44px;height:44px;border-radius:12px}.ib-s{width:36px;height:36px;border-radius:10px}
+
+/* ═══ FAB ═══ */
+.fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--g),#b8943f);display:flex;align-items:center;justify-content:center;z-index:40;cursor:pointer;box-shadow:0 8px 32px var(--gg),0 2px 8px rgba(0,0,0,.4);transition:transform .2s;color:var(--bg)}
+.fab:hover{transform:scale(1.08)}
+.fab:active{transform:scale(.95)}
+
+/* ═══ PROGRESS ═══ */
+.ptrack{height:3px;background:var(--el);border-radius:2px;overflow:hidden}
+.pfill{height:100%;border-radius:2px;transition:width .8s ease}
+
+/* ═══ HOME ═══ */
+.home-greet span{color:var(--t3);font-size:13px;display:block;margin-bottom:4px}
+.home-greet h1{font-family:var(--fd);font-size:28px;font-weight:800;letter-spacing:-.5px}
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.qitem{display:flex;align-items:center;gap:14px;padding:16px;cursor:pointer}
+.qitem .ql{color:var(--t);font-weight:600;font-size:14px;font-family:var(--fd)}
+
+/* ═══ BOOKING ═══ */
+.step-bar{display:flex;gap:6px;margin-bottom:28px}
+.step-i{flex:1}.step-track{height:2px;border-radius:1px;margin-bottom:8px;transition:background .4s}
+.step-lbl{font-size:11px;font-family:var(--fd)}
+.scard{display:flex;align-items:center;gap:16px;padding:18px;cursor:pointer;margin-bottom:12px;transition:all .25s}
+.scard:hover{border-color:rgba(200,168,76,.3);transform:translateY(-2px)}
+.scard:active{transform:translateY(0)}
+.sprice{text-align:right}
+.sprice .amt{color:var(--g);font-weight:800;font-size:22px;font-family:var(--fd)}
+.sprice .unit{color:var(--t3);font-size:11px}
+.dscroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:24px}
+.ditem{min-width:64px;padding:12px 8px;border-radius:14px;text-align:center;cursor:pointer;background:var(--el);border:1px solid var(--bd);transition:all .2s}
+.ditem.on{background:var(--g);border-color:var(--g)}
+.ditem .dd{font-size:11px;font-weight:500;margin-bottom:4px}
+.ditem .dn{font-size:20px;font-weight:700;font-family:var(--fd)}
+.ditem .dm{font-size:10px;margin-top:2px}
+.ditem.on .dd,.ditem.on .dn,.ditem.on .dm{color:var(--bg)}
+.ditem:not(.on) .dd{color:var(--t3)}.ditem:not(.on) .dn{color:var(--t)}.ditem:not(.on) .dm{color:var(--t3)}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px}
+.tslot{padding:12px 4px;border-radius:var(--Rs);text-align:center;cursor:pointer;background:var(--el);border:1px solid var(--bd);font-size:13px;font-weight:600;font-family:var(--fd);color:var(--t);transition:all .2s}
+.tslot.on{background:var(--g);border-color:var(--g);color:var(--bg)}
+.tslot.bk{opacity:.2;cursor:not-allowed}
+.drow{display:flex;gap:8px;margin-bottom:28px}
+.dri{flex:1;padding:14px 0;border-radius:var(--Rs);text-align:center;cursor:pointer;background:var(--el);border:1px solid var(--bd);transition:all .2s}
+.dri.on{background:var(--g);border-color:var(--g)}
+.dri .drn{font-size:16px;font-weight:700;font-family:var(--fd)}
+.dri .dru{font-size:11px;margin-left:2px}
+.dri.on .drn,.dri.on .dru{color:var(--bg)}
+.dri:not(.on) .drn{color:var(--t)}.dri:not(.on) .dru{color:var(--t3)}
+.srow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)}
+.srow .sk{color:var(--t3);font-size:14px}.srow .sv{color:var(--t);font-size:14px;font-weight:500}
+.stotal{display:flex;justify-content:space-between;padding-top:14px;margin-top:4px}
+.stotal .sk{color:var(--t);font-size:16px;font-weight:600}
+.stotal .sv{color:var(--g);font-size:22px;font-weight:800;font-family:var(--fd)}
+
+/* ═══ FOOD ═══ */
+.fheader{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.cart-badge{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:14px;background:var(--gd);border:1px solid rgba(200,168,76,.2);cursor:pointer;transition:transform .15s}
+.cart-badge:active{transform:scale(.95)}
+.cart-badge span{color:var(--g);font-weight:700;font-size:14px;font-family:var(--fd)}
+.fitem{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid var(--bd)}
+.finfo{flex:1}
+.fname{display:flex;align-items:center;gap:8px}
+.fname span{color:var(--t);font-weight:600;font-size:15px}
+.fsub{color:var(--t3);font-size:12px;margin-top:3px}
+.fprice{color:var(--g);font-weight:700;font-size:16px;font-family:var(--fd);margin-top:6px}
+.qty{display:flex;align-items:center;gap:10px;background:var(--el);border-radius:var(--Rs);padding:8px 14px}
+.qty button{background:none;padding:0;display:flex;color:var(--t2);transition:transform .15s}
+.qty button:active{transform:scale(.8)}
+.qty button.plus{color:var(--g)}
+.qty .qn{color:var(--t);font-weight:700;min-width:20px;text-align:center;font-family:var(--fd)}
+
+/* ═══ CHAT ═══ */
+.chatwrap{display:flex;flex-direction:column;height:calc(100vh - 60px);position:relative}
+.chhead{padding:14px 20px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:14px}
+.chname{color:var(--t);font-weight:600;font-size:15px;font-family:var(--fd)}
+.chname .hash{color:var(--t3);font-weight:400}
+.chdesc{color:var(--t3);font-size:11px}
+.chside{position:absolute;top:0;left:-280px;bottom:0;width:260px;background:var(--bg);border-right:1px solid var(--bd);z-index:10;padding:20px 0;transition:left .3s cubic-bezier(.4,0,.2,1)}
+.chside.open{left:0}
+.chltitle{padding:0 20px 12px;color:var(--g);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;font-family:var(--fd)}
+.chi{display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;border-left:3px solid transparent;transition:all .2s}
+.chi.on{background:var(--gd);border-left-color:var(--g)}
+.chi .chl{flex:1;font-size:14px;color:var(--t2)}.chi.on .chl{color:var(--t);font-weight:600}
+.chur{background:var(--ac);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.chmsgs{flex:1;overflow-y:auto;padding:20px}
+.mrow{display:flex;gap:12px;margin-bottom:18px}
+.mrow.me{flex-direction:row-reverse}
+.mav{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;font-family:var(--fd)}
+.mbody{max-width:75%}
+.mmeta{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.mrow.me .mmeta{flex-direction:row-reverse}
+.muser{font-size:13px;font-weight:600;font-family:var(--fd)}
+.mtime{color:var(--t3);font-size:10px}
+.mbub{padding:10px 16px;border-radius:4px 16px 16px 16px;background:var(--sf);border:1px solid var(--bd);color:var(--t);font-size:14px;line-height:1.6}
+.mrow.me .mbub{border-radius:16px 4px 16px 16px;background:var(--gd);border-color:rgba(200,168,76,.2)}
+.chinput{padding:14px 20px;background:var(--sf);border-top:1px solid var(--bd);display:flex;gap:10px}
+.chinp{flex:1;padding:12px 16px;border-radius:14px;border:1px solid var(--bd);background:var(--el);color:var(--t);font-size:14px;transition:border-color .2s}
+.chinp:focus{border-color:rgba(200,168,76,.3)}
+.chinp::placeholder{color:var(--t3)}
+.chsend{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--el);color:var(--t3);transition:all .2s}
+.chsend.on{background:var(--g);color:var(--bg)}
+
+/* ═══ SHOP ═══ */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.scard2{padding:14px;cursor:pointer}
+.scard2:hover{transform:translateY(-3px)}
+.scard2:active{transform:translateY(0)}
+.siw{background:var(--el);border-radius:14px;padding:20px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;transition:background .2s}
+.scard2:hover .siw{background:var(--gd)}
+.smeta{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.sp{color:var(--g);font-weight:800;font-size:16px;font-family:var(--fd)}
+.sr{display:flex;align-items:center;gap:3px;color:var(--t3);font-size:12px}
+.sn{color:var(--t);font-weight:600;font-size:14px;margin-top:8px;line-height:1.3;font-family:var(--fd)}
+.detail-back{display:flex;align-items:center;gap:8px;color:var(--t2);font-size:14px;cursor:pointer;padding:0 0 20px;background:none;transition:color .2s}
+.detail-back:hover{color:var(--t)}
+.detail-hero{background:var(--sf);border-radius:24px;padding:40px;display:flex;align-items:center;justify-content:center;border:1px solid var(--bd);margin-bottom:24px;min-height:180px}
+
+/* ═══ LOYALTY ═══ */
+.tstats{display:flex;justify-content:space-around;padding-top:16px;border-top:1px solid var(--bd)}
+.tstat{text-align:center}
+.tstat .tsn{color:var(--t);font-size:22px;font-weight:700;font-family:var(--fd)}
+.tstat .tsl{color:var(--t3);font-size:11px}
+.ptag{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:10px;margin:0 8px 8px 0;font-size:12px;font-weight:500}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px}
+.rcard{text-align:center;padding:16px}
+.hi{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--bd)}
+.hi-info{flex:1}
+.hi-l{color:var(--t);font-size:14px;font-weight:500}
+.hi-d{color:var(--t3);font-size:12px}
+.hi-p{font-weight:700;font-size:16px;font-family:var(--fd)}
+.hi-p.e{color:var(--gr)}.hi-p.s{color:var(--r)}
+
+/* ═══ BOT ═══ */
+.botwrap{display:flex;flex-direction:column;height:calc(100vh - 60px)}
+.bothead{padding:14px 20px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:14px}
+.botav{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--g),#b8943f);display:flex;align-items:center;justify-content:center;color:var(--bg)}
+.botstatus{display:flex;align-items:center;gap:5px}
+.botstatus .dot{width:6px;height:6px;border-radius:3px;background:var(--gr)}
+.botstatus span{color:var(--gr);font-size:11px;font-weight:500}
+.botmsgs{flex:1;overflow-y:auto;padding:20px}
+.bmsg{display:flex;gap:12px;margin-bottom:18px}
+.bmsg.u{flex-direction:row-reverse}
+.bmav{width:32px;height:32px;border-radius:10px;background:var(--gd);border:1px solid rgba(200,168,76,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--g)}
+.bmbub{max-width:80%;padding:12px 18px;border-radius:4px 18px 18px 18px;background:var(--sf);border:1px solid var(--bd);color:var(--t);font-size:14px;line-height:1.65}
+.bmsg.u .bmbub{border-radius:18px 4px 18px 18px;background:var(--gd);border-color:rgba(200,168,76,.2)}
+.bmbub strong{color:var(--g)}
+.bsug{display:flex;flex-wrap:wrap;gap:8px;padding:0 20px 8px}
+.bsi{padding:10px 16px;border-radius:14px;background:var(--el);border:1px solid var(--bd);color:var(--t2);font-size:13px;cursor:pointer;transition:all .2s}
+.bsi:hover{border-color:var(--g);color:var(--g)}
+.tdots{display:flex;gap:5px;padding:16px 20px}
+.tdots span{width:7px;height:7px;border-radius:50%;background:var(--g);opacity:.4}
+.tdots span:nth-child(1){animation:dotPulse 1.2s infinite 0s}
+.tdots span:nth-child(2){animation:dotPulse 1.2s infinite .15s}
+.tdots span:nth-child(3){animation:dotPulse 1.2s infinite .3s}
+.botbar{padding:14px 20px;background:var(--sf);border-top:1px solid var(--bd);display:flex;gap:10px}
+.botinp{flex:1;padding:12px 16px;border-radius:14px;border:1px solid var(--bd);background:var(--el);color:var(--t);font-size:14px;transition:border-color .2s}
+.botinp:focus{border-color:rgba(200,168,76,.3)}
+.botinp::placeholder{color:var(--t3)}
+.botsend{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--el);color:var(--t3);transition:all .25s}
+.botsend.on{background:linear-gradient(135deg,var(--g),#b8943f);color:var(--bg);box-shadow:0 4px 14px var(--gg)}
+
+/* ═══ CONFIRM ═══ */
+.confirm{display:flex;flex-direction:column;align-items:center;justify-content:center;height:65vh;text-align:center;padding:32px}
+.confirm .ci{width:72px;height:72px;border-radius:36px;background:var(--grd);display:flex;align-items:center;justify-content:center;margin-bottom:24px;color:var(--gr);animation:checkPop .5s ease-out}
+.confirm h2{font-family:var(--fd);font-size:24px;font-weight:700;margin-bottom:8px}
+.confirm .csub{color:var(--t2);font-size:14px}
+.confirm .cnote{color:var(--t3);font-size:13px;margin-top:12px}
+
+/* ═══ DESKTOP APPLICATION LAYOUT ═══ */
+
+.app-shell{
+  display:flex;
+  min-height:100vh;
+}
+
+.app-main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+@media (min-width:1024px){
+.drawer{
+    position:relative;
+    left:0 !important;
+    width:260px;
+    flex-shrink:0;
+  }
+
+  .drawer-overlay{
+    display:none !important;
+  }
+
+  .topbar{
+    position:relative;
+    width:100%;
+  }
+
+  .page{
+    flex:1;
+    overflow-y:auto;
+    padding:40px 60px;
+  }
+
+  .fab{
+    display:none !important;
+  }
+}
+
+
+/* ═══ LOGO: BRAND IMAGE OVERRIDES ═══ */
+.slogo,.login-logo,.d-logo{
+  background:transparent !important;
+  box-shadow:none !important;
+}
+.slogo,.login-logo,.d-logo{
+  display:flex;align-items:center;justify-content:center;
+}
+.razz-logo{display:block;object-fit:contain;filter:drop-shadow(0 0 18px rgba(255,0,200,.35)) drop-shadow(0 0 26px rgba(0,255,255,.28));}
+.razz-logo-lg{width:64px;height:64px;transform:scale(1.15);}
+.razz-logo-md{width:58px;height:58px;transform:scale(1.15);}
+.razz-logo-sm{width:38px;height:38px;transform:scale(1.10);}
+
+/* tighten drawer brand alignment */
+.drawer-brand{align-items:center;}
+
+</style>
+</head>
+<body>
+<div class='app-shell'>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="slogo"><img class="razz-logo razz-logo-lg" src="razzlogo.png" alt="Razz"></div>
+  <h1>RAZZ</h1>
+  <p>Gaming Studio</p>
+  <div class="sbar"><div class="sbar-fill" id="splashBar"></div></div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+  </div>
+  <div class="login-content">
+    <div class="login-top">
+      <div class="login-logo anim-up"><img class="razz-logo razz-logo-md" src="razzlogo.png" alt="Razz"></div>
+      <h1 class="anim-up d1">RAZZ</h1>
+      <p class="sub anim-up d2">Gaming Studio</p>
+      <p class="tagline anim-up d3">Your premium gaming destination in Delhi. Book stations, order food, earn rewards & connect with gamers.</p>
+      <div class="login-features anim-up d4">
+        <div class="login-feat"><div class="lf-icon" style="background:var(--gd)"><i data-lucide="monitor" style="width:20px;height:20px;color:var(--g)"></i></div><div class="lf-label">RTX PCs</div></div>
+        <div class="login-feat"><div class="lf-icon" style="background:var(--grd)"><i data-lucide="gamepad-2" style="width:20px;height:20px;color:var(--gr)"></i></div><div class="lf-label">PS5</div></div>
+        <div class="login-feat"><div class="lf-icon" style="background:var(--acd)"><i data-lucide="trophy" style="width:20px;height:20px;color:var(--ac)"></i></div><div class="lf-label">Tourneys</div></div>
+        <div class="login-feat"><div class="lf-icon" style="background:var(--rd)"><i data-lucide="bot" style="width:20px;height:20px;color:var(--r)"></i></div><div class="lf-label">AI Bot</div></div>
+      </div>
+    </div>
+    <div class="login-bottom anim-up d5">
+      <div class="login-input-group"><input class="login-input" placeholder="Phone number or email" type="text"></div>
+      <button class="login-btn" onclick="doLogin()">Get Started</button>
+      <div class="login-or">or</div>
+      <div class="login-social">
+        <button onclick="doLogin()"><i data-lucide="smartphone" style="width:16px;height:16px"></i> Google</button>
+        <button onclick="doLogin()"><i data-lucide="message-circle" style="width:16px;height:16px"></i> Discord</button>
+      </div>
+      <div class="login-skip"><button onclick="doLogin()">Skip for now →</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="dOverlay" onclick="toggleDrawer()"></div>
+
+<!-- DRAWER -->
+<nav class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="drawer-brand">
+      <div class="d-logo"><img class="razz-logo razz-logo-sm" src="razzlogo.png" alt="Razz"></div>
+      <div class="d-brand-text"><h3>RAZZ</h3><span>Gaming Studio</span></div>
+    </div>
+    <div class="drawer-user">
+      <div class="d-avatar"><i data-lucide="user" style="width:18px;height:18px"></i></div>
+      <div><div class="du-name">RS</div><div class="du-tier">Elite · 1,820 pts</div></div>
+    </div>
+  </div>
+  <div class="drawer-nav" id="drawerNav"></div>
+  <div class="drawer-footer">
+    <div class="df-item"><i data-lucide="settings" style="width:18px;height:18px"></i> Settings</div>
+    <div class="df-item"><i data-lucide="help-circle" style="width:18px;height:18px"></i> Help & FAQ</div>
+  </div>
+</nav>
+
+<div class='app-main'>
+
+<!-- TOPBAR -->
+<header class="topbar" id="topbar" style="display:none">
+  <div class="topbar-left">
+    <button class="menu-btn" onclick="toggleDrawer()"><i data-lucide="menu" style="width:22px;height:22px"></i></button>
+    <span class="topbar-brand">RAZZ</span>
+  </div>
+  <div class="topbar-right">
+    <button class="topbar-icon" onclick="goTo('chatbot')"><i data-lucide="bot" style="width:18px;height:18px"></i></button>
+    <button class="topbar-icon"><i data-lucide="bell" style="width:18px;height:18px"></i><span class="notif-dot"></span></button>
+  </div>
+</header>
+
+<!-- PAGES -->
+<div class="page" id="pg-home"></div>
+<div class="page" id="pg-booking"></div>
+<div class="page" id="pg-food"></div>
+<div class="page" id="pg-community" style="padding:0"></div>
+<div class="page" id="pg-shop"></div>
+<div class="page" id="pg-loyalty"></div>
+<div class="page" id="pg-chatbot" style="padding:0"></div>
+
+<!-- FAB -->
+<div class="fab" id="fab" style="display:none" onclick="goTo('chatbot')">
+  <i data-lucide="bot" style="width:26px;height:26px"></i>
+</div>
+
+<script>
+// ═══ STATE ═══
+let pg='home',bStep=0,bSt=null,bDt='',bSl='',bDur=1,fCat='Snacks',fCart={},
+cCh='general',cSide=false,cMsgs={},sCat='All',sCart={},sDet=null,
+botMsgs=[{role:'assistant',content:'Welcome to <strong>RazzBot</strong> — your gaming concierge.\n\nI can help with game strategies, title recommendations, esports updates, or anything about Razz Gaming Studio. What would you like to know?'}],
+botLoad=false;
+
+// ═══ DATA ═══
+const S=[{id:'pc',n:'Gaming PC',s:'RTX 4070 Ti · i7-13700K · 240Hz',p:120,i:'monitor',seats:12,av:5},{id:'ps5',n:'PS5 Console',s:'4K HDR · DualSense · 65" OLED',p:100,i:'gamepad-2',seats:6,av:3},{id:'sim',n:'Racing Simulator',s:'Logitech G29 · Triple Screen',p:200,i:'car',seats:2,av:1}];
+const TS=['10:30','11:30','12:30','13:30','14:30','15:30','16:30','17:30','18:30','19:30','20:30','21:30'];
+const BK=['12:30','15:30','19:30'];
+const M={Snacks:[{id:'f1',n:'Loaded Nachos',p:149,s:'Cheesy jalapeño with salsa',t:'Popular'},{id:'f2',n:'BBQ Chicken Wings',p:199,s:'Glazed wings · 6 pcs',t:'Bestseller'},{id:'f3',n:'Seasoned Fries',p:99,s:'Crispy with peri-peri dust'},{id:'f4',n:'Cheesy Garlic Bread',p:129,s:'Loaded mozzarella toast'}],Beverages:[{id:'f5',n:'Oreo Milkshake',p:149,s:'Thick, creamy & cold',t:'Popular'},{id:'f6',n:'Mango Shake',p:129,s:'Fresh alphonso mango'},{id:'f7',n:'Chocolate Shake',p:139,s:'Rich belgian cocoa'},{id:'f8',n:'Red Bull Energy',p:125,s:'Stay charged',t:'Gaming Fuel'},{id:'f9',n:'Iced Coffee',p:99,s:'Strong cold brew'},{id:'f10',n:'Virgin Mojito',p:109,s:'Mint lime refresher'}],Combos:[{id:'f11',n:'Solo Gamer',p:299,s:'Any snack + Any drink',t:'Value'},{id:'f12',n:'Duo Pack',p:399,s:'2× Snack + 2× Shake'},{id:'f13',n:'Squad Box',p:699,s:'4× Snack + 4× Drink',t:'Best for Groups'}]};
+const CH=[{id:'general',n:'General',d:'Hang out & chat',u:3},{id:'lfg',n:'Looking for Group',d:'Find your squad',u:7},{id:'tournaments',n:'Tournaments',d:'Compete & win',u:1},{id:'memes',n:'Memes & Clips',d:'Share the laughs',u:12},{id:'tech',n:'Tech Talk',d:'Builds & specs',u:0}];
+const DM={general:[{u:'Arjun.exe',m:'anyone up for Valorant tonight?',t:'2:15 PM',c:'#6c5ce7'},{u:'NinjaSlay3r',m:'im down! what rank are you?',t:'2:16 PM',c:'#e74c3c'},{u:'PixelQueen',m:'the new PC setups here are insane',t:'2:18 PM',c:'#c8a84c'},{u:'ShadowFox',m:'Just booked 4-6pm, anyone wanna squad up?',t:'2:22 PM',c:'#27ae60'}],lfg:[{u:'ValoSensei',m:'Need 2 more for ranked Valo, Diamond+ only',t:'1:45 PM',c:'#6c5ce7'},{u:'CS2King',m:'CS2 5-stack anyone? We got 3',t:'1:50 PM',c:'#e74c3c'}],tournaments:[{u:'Razz Official',m:'WEEKLY VALORANT TOURNAMENT — Saturday 4PM! ₹5,000 prize pool + 10hrs free gaming.',t:'10:00 AM',c:'#c8a84c',a:1},{u:'ClutchGod',m:'our squad is registered lets gooo',t:'11:30 AM',c:'#6c5ce7'}],memes:[{u:'MemeLord',m:'me after losing 10 ranked games: "just one more bro"',t:'12:00 PM',c:'#e74c3c'},{u:'GigaChad',m:'"i\'m not addicted" — books 8hr session',t:'12:15 PM',c:'#27ae60'}],tech:[{u:'PCBuilder',m:'anyone know if Razz upgraded to 4080s?',t:'11 AM',c:'#6c5ce7'},{u:'Razz Official',m:'Running 4070 Ti Super — 4080s coming Q2!',t:'11:15 AM',c:'#c8a84c',a:1}]};
+cMsgs=JSON.parse(JSON.stringify(DM));
+const SI=[{id:'s1',n:'HyperX Cloud III',p:7990,c:'Gear',s:'7.1 Surround Headset',r:4.7,rv:128,i:'headphones'},{id:'s2',n:'Razer DeathAdder V3',p:4999,c:'Gear',s:'Ergonomic · 30K DPI',r:4.8,rv:89,i:'mouse'},{id:'s3',n:'Cosmic Byte GK-28',p:2499,c:'Gear',s:'Mechanical RGB Keyboard',r:4.3,rv:214,i:'keyboard'},{id:'s4',n:'PS5 DualSense',p:5990,c:'Gear',s:'Midnight Black · Haptic',r:4.7,rv:156,i:'gamepad-2'},{id:'s5',n:'One Piece Vol. 105',p:499,c:'Manga',s:'Latest arc · Oda',r:4.9,rv:67,i:'book-open'},{id:'s6',n:'Jujutsu Kaisen Vol. 27',p:449,c:'Manga',s:'Culling Game arc',r:4.8,rv:45,i:'book-open'},{id:'s7',n:'Chainsaw Man Vol. 17',p:449,c:'Manga',s:'Part 2 · Fujimoto',r:4.7,rv:52,i:'book-open'},{id:'s8',n:'AoT Box Set',p:8999,c:'Manga',s:'34 vols · Collector\'s',r:4.9,rv:31,i:'package'},{id:'s9',n:'GG WP Oversized Tee',p:599,c:'Merch',s:'Cotton · S–XXL',r:4.2,rv:88,i:'shirt'},{id:'s10',n:'RGB Mousepad XL',p:1499,c:'Gear',s:'900×400mm',r:4.4,rv:73,i:'monitor'},{id:'s11',n:'Konoha Headband',p:299,c:'Merch',s:'Metal plate',r:4.5,rv:192,i:'shield'},{id:'s12',n:'Goku Figure',p:1299,c:'Merch',s:'Ultra Instinct 18cm',r:4.6,rv:47,i:'star'}];
+const NAV=[['home','Home','home'],['booking','Book Session','monitor'],['food','Food & Drinks','utensils-crossed'],['community','Community','message-square'],['shop','Razz Store','shopping-bag'],['loyalty','Rewards','award'],['chatbot','RazzBot AI','bot']];
+const TIERS=[{n:'Rookie',mn:0,mx:499,c:'#5c5a6e',pk:['5% F&B discount','Birthday freebie']},{n:'Veteran',mn:500,mx:1499,c:'#6c5ce7',pk:['10% F&B discount','Priority booking','Free drink/month']},{n:'Elite',mn:1500,mx:3999,c:'#c8a84c',pk:['15% on everything','Free hour/month','Tournament entry']},{n:'Legendary',mn:4000,mx:1e9,c:'#e8d48b',pk:['20% on everything','Free 3hrs/month','VIP access','Exclusive merch']}];
+
+// ═══ HELPERS ═══
+function redeemReward(rewardName, cost){
+  const ok = confirm(`Redeem "${rewardName}" for ${cost} pts? (Demo Mode)`);
+  if(!ok) return;
+  alert(`🎉 ${rewardName} redeemed successfully for RS! (Demo Mode)`);
+}
+
+function demoFoodOrder(){
+  // Demo: place order, clear cart, show confirmation
+  alert("✅ Demo Order Placed Successfully!\n\nYour food will be delivered to Station #7.");
+  fCart = {};
+  render.food();
+  ic();
+}
+
+const fT=t=>{const h=+t.split(':')[0],m=t.split(':')[1];return h>12?`${h-12}:${m} PM`:h===12?`12:${m} PM`:`${t} AM`};
+const gD=()=>Array.from({length:7},(_,i)=>{const d=new Date;d.setDate(d.getDate()+i);return{dy:d.toLocaleDateString('en-IN',{weekday:'short'}),dt:d.getDate(),mo:d.toLocaleDateString('en-IN',{month:'short'}),v:d.toISOString().split('T')[0]}});
+const aF=()=>Object.values(M).flat();
+const cC=()=>Object.values(fCart).reduce((a,b)=>a+b,0);
+const cT=()=>{const a=aF();return Object.entries(fCart).reduce((s,[id,q])=>s+(a.find(i=>i.id===id)?.p||0)*q,0)};
+const sCC=()=>Object.values(sCart).reduce((a,b)=>a+b,0);
+const sCT=()=>Object.entries(sCart).reduce((s,[id,q])=>s+(SI.find(i=>i.id===id)?.p||0)*q,0);
+const ic=()=>lucide.createIcons();
+const catCol=c=>c==='Gear'?'var(--g)':c==='Manga'?'var(--ac)':'var(--r)';
+
+// ═══ SPLASH + LOGIN ═══
+function doLogin(){
+  document.getElementById('loginScreen').style.opacity='0';
+  document.getElementById('loginScreen').style.transition='opacity .5s';
+  setTimeout(()=>{
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('topbar').style.display='flex';
+    document.getElementById('fab').style.display='flex';
+    goTo('home');
+  },500);
+}
+
+// ═══ NAVIGATION ═══
+function toggleDrawer(){document.getElementById('drawer').classList.toggle('open');document.getElementById('dOverlay').classList.toggle('open')}
+function goTo(p){
+  pg=p;
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  const el=document.getElementById('pg-'+p);
+  el.classList.add('active');
+  el.classList.remove('page-transition');
+  void el.offsetWidth;
+  el.classList.add('page-transition');
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('dOverlay').classList.remove('open');
+  document.getElementById('fab').style.display=p==='chatbot'?'none':'flex';
+  document.querySelectorAll('.drawer-item').forEach(d=>d.classList.remove('active'));
+  document.querySelectorAll('.drawer-item').forEach((d,i)=>{if(NAV[i][0]===p)d.classList.add('active')});
+  window.scrollTo(0,0);
+  render[p]();ic();
+}
+
+// ═══ DRAWER NAV BUILD ═══
+document.getElementById('drawerNav').innerHTML=NAV.map(([id,label,icon])=>`<div class="drawer-item${id==='home'?' active':''}" onclick="goTo('${id}')"><i data-lucide="${icon}" style="width:20px;height:20px" class="di-icon"></i> ${label}</div>`).join('');
+
+// ═══ RENDERERS ═══
+const render={};
+
+render.home=()=>{
+  document.getElementById('pg-home').innerHTML=`<div style="padding:16px 20px 100px">
+  <div class="home-greet anim-up" style="margin-bottom:24px"><span>Welcome back</span><h1>RS</h1></div>
+  <div class="card glow anim-up d1" style="margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+      <div style="display:flex;gap:14px;align-items:center">
+        <div class="ib ib-l" style="background:var(--gd)"><i data-lucide="monitor" style="width:22px;height:22px;color:var(--g)"></i></div>
+        <div><div style="color:var(--t);font-weight:600;font-size:16px;font-family:var(--fd)">PC Station #7</div><div style="color:var(--t3);font-size:12px">2hr session · Started 3:30 PM</div></div>
+      </div><span class="chip cgr">LIVE</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:var(--t3)">Time remaining</span><span style="font-size:12px;color:var(--g);font-weight:600;font-family:var(--fd)">1h 23m</span></div>
+    <div class="ptrack"><div class="pfill" style="width:38%;background:linear-gradient(90deg,var(--g),rgba(200,168,76,.5))"></div></div>
+  </div>
+  <div class="card clickable anim-up d2" onclick="goTo('loyalty')" style="margin-bottom:16px;display:flex;align-items:center;gap:14px">
+    <div class="ib ib-l" style="background:linear-gradient(135deg,rgba(200,168,76,.2),rgba(200,168,76,.05));border:1.5px solid rgba(200,168,76,.3)"><i data-lucide="crown" style="width:22px;height:22px;color:var(--g)"></i></div>
+    <div style="flex:1"><div style="color:var(--g);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-family:var(--fd)">Elite</div><div style="color:var(--t);font-size:22px;font-weight:800;font-family:var(--fd)">1,820 <span style="font-size:12px;color:var(--t3);font-weight:400">pts</span></div></div>
+    <i data-lucide="chevron-right" style="width:18px;height:18px;color:var(--t3)"></i>
+  </div>
+  <div class="sec-title anim-up d3"><h2>Quick Actions</h2></div>
+  <div class="qgrid" style="margin-bottom:28px">
+    ${[['booking','monitor','Book Station','var(--gd)','var(--g)','rgba(200,168,76,.15)'],['food','utensils-crossed','Order Food','var(--grd)','var(--gr)','rgba(39,174,96,.15)'],['community','message-square','Community','var(--acd)','var(--ac)','rgba(108,92,231,.15)'],['shop','shopping-bag','Razz Store','var(--rd)','var(--r)','rgba(231,76,60,.15)']].map(([tab,icon,label,bg,col,bdr],i)=>`<div class="card clickable qitem anim-up d${i+3}" onclick="goTo('${tab}')"><div class="ib ib-m" style="background:${bg};border:1px solid ${bdr}"><i data-lucide="${icon}" style="width:20px;height:20px;color:${col}"></i></div><span class="ql">${label}</span></div>`).join('')}
+  </div>
+  <div class="sec-title anim-up d5"><h2>Upcoming</h2></div>
+  <div class="card anim-up d6" style="border-color:rgba(200,168,76,.1)"><div style="display:flex;gap:14px;align-items:flex-start"><div class="ib ib-l" style="background:var(--gd)"><i data-lucide="trophy" style="width:22px;height:22px;color:var(--g)"></i></div><div><div style="color:var(--t);font-weight:600;font-size:16px;font-family:var(--fd)">Weekly Valorant Tournament</div><div style="color:var(--t3);font-size:13px;margin-top:2px">Saturday · 4:00 PM</div><div style="display:flex;gap:8px;margin-top:10px"><span class="chip cg">₹5,000 Prize</span><span class="chip cgr">12/16 spots</span></div></div></div></div>
+  </div>`;
+};
+
+render.booking=()=>{
+  const el=document.getElementById('pg-booking'),ds=gD(),sel=S.find(x=>x.id===bSt);
+  if(bStep===99){el.innerHTML=`<div style="padding:16px 20px 100px"><div class="confirm"><div class="ci"><i data-lucide="check" style="width:36px;height:36px"></i></div><h2>Booking Confirmed</h2><p class="csub">${sel?.n} · ${fT(bSl)} · ${bDur}hr</p><p class="cnote">Confirmation sent to WhatsApp</p></div></div>`;setTimeout(()=>{bStep=0;bSt=null;bDt='';bSl='';bDur=1;render.booking();ic()},3000);ic();return}
+  let h=`<div style="padding:16px 20px 100px"><div class="sec-title anim-up"><h2>Book a Session</h2><p>Reserve your gaming station</p></div><div class="step-bar anim-up d1">${['Station','Schedule','Confirm'].map((s,i)=>`<div class="step-i"><div class="step-track" style="background:${i<=bStep?'var(--g)':'var(--el)'}"></div><span class="step-lbl" style="color:${i===bStep?'var(--g)':i<bStep?'var(--t2)':'var(--t3)'};font-weight:${i===bStep?600:400}">${s}</span></div>`).join('')}</div>`;
+  if(bStep===0)h+=S.map((s,i)=>`<div class="card scard anim-up d${i+2}" onclick="bSt='${s.id}';bStep=1;render.booking();ic()"><div class="ib ib-l" style="background:var(--el)"><i data-lucide="${s.i}" style="width:24px;height:24px;color:var(--t2)"></i></div><div style="flex:1"><div style="color:var(--t);font-weight:600;font-size:16px;font-family:var(--fd)">${s.n}</div><div style="color:var(--t3);font-size:12px;margin-top:2px">${s.s}</div><div style="display:flex;gap:8px;margin-top:8px"><span class="chip cgr">${s.av} open</span><span class="chip cg">${s.seats} total</span></div></div><div class="sprice"><div class="amt">₹${s.p}</div><div class="unit">/hour</div></div></div>`).join('');
+  if(bStep===1){h+=`<p class="anim-up" style="color:var(--t2);font-size:13px;font-weight:500;margin-bottom:12px">Select Date</p><div class="dscroll anim-up d1">${ds.map(d=>`<div class="ditem${bDt===d.v?' on':''}" onclick="bDt='${d.v}';render.booking();ic()"><div class="dd">${d.dy}</div><div class="dn">${d.dt}</div><div class="dm">${d.mo}</div></div>`).join('')}</div>`;
+  if(bDt){h+=`<p class="anim-up d2" style="color:var(--t2);font-size:13px;font-weight:500;margin-bottom:12px">Select Time</p><div class="tgrid anim-up d2">${TS.map(t=>{const b=BK.includes(t),a=bSl===t;return`<div class="tslot${a?' on':''}${b?' bk':''}" onclick="${b?'':`bSl='${t}';render.booking();ic()`}">${fT(t)}</div>`}).join('')}</div><p class="anim-up d3" style="color:var(--t2);font-size:13px;font-weight:500;margin-bottom:12px">Duration</p><div class="drow anim-up d3">${[1,2,3,5].map(x=>`<div class="dri${bDur===x?' on':''}" onclick="bDur=${x};render.booking();ic()"><span class="drn">${x}</span><span class="dru">hr</span></div>`).join('')}</div><button class="btn btn-g anim-up d4" ${!bSl?'disabled':''} onclick="bStep=2;render.booking();ic()">Continue</button>`}
+  h+=`<button class="btn btn-go anim-up d5" style="margin-top:10px" onclick="bStep=0;render.booking();ic()">Back</button>`}
+  if(bStep===2&&sel){const d=ds.find(x=>x.v===bDt);h+=`<div class="card glow anim-scale" style="margin-bottom:20px"><div style="display:flex;align-items:center;gap:12px;margin-bottom:20px"><div class="ib ib-m" style="background:var(--gd)"><i data-lucide="${sel.i}" style="width:22px;height:22px;color:var(--g)"></i></div><div style="color:var(--g);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-family:var(--fd)">Booking Summary</div></div>${[['Station',sel.n],['Date',`${d?.dy}, ${d?.dt} ${d?.mo}`],['Time',fT(bSl)],['Duration',`${bDur} hour${bDur>1?'s':''}`]].map(([k,v])=>`<div class="srow"><span class="sk">${k}</span><span class="sv">${v}</span></div>`).join('')}<div class="stotal"><span class="sk">Total</span><span class="sv">₹${sel.p*bDur}</span></div></div><button class="btn btn-g" onclick="bStep=99;render.booking();ic()">Confirm Booking</button><button class="btn btn-go" style="margin-top:10px" onclick="bStep=1;render.booking();ic()">Back</button>`}
+  h+='</div>';el.innerHTML=h;
+};
+
+render.food=(cart)=>{
+  const el=document.getElementById('pg-food'),all=aF(),cnt=cC(),tot=cT();
+  if(cart){const items=Object.entries(fCart).map(([id,q])=>({...all.find(i=>i.id===id),q}));let h=`<div style="padding:16px 20px 100px"><div style="display:flex;align-items:center;gap:12px;margin-bottom:24px"><button class="detail-back" onclick="render.food();ic()"><i data-lucide="arrow-left" style="width:18px;height:18px"></i> Back</button><div class="sec-title" style="margin-bottom:0"><h2>Your Order</h2></div></div>`;
+  if(!items.length)h+=`<div style="text-align:center;padding:60px 0;color:var(--t3)"><i data-lucide="shopping-cart" style="width:48px;height:48px;display:block;margin:0 auto 16px"></i><p style="font-family:var(--fd);font-size:16px">Cart is empty</p></div>`;
+  else{items.forEach(x=>{h+=`<div class="fitem"><div class="finfo"><div style="color:var(--t);font-size:15px;font-weight:600">${x.n}</div><div style="color:var(--g);font-size:14px;font-weight:700;font-family:var(--fd);margin-top:2px">₹${x.p}</div></div><div class="qty"><button onclick="fCart['${x.id}']--;if(fCart['${x.id}']<=0)delete fCart['${x.id}'];render.food(true);ic()"><i data-lucide="minus" style="width:16px;height:16px"></i></button><span class="qn">${x.q}</span><button class="plus" onclick="fCart['${x.id}']=(fCart['${x.id}']||0)+1;render.food(true);ic()"><i data-lucide="plus" style="width:16px;height:16px"></i></button></div></div>`});const disc=Math.round(tot*.15);h+=`<div class="card" style="margin-top:20px"><div style="display:flex;justify-content:space-between;padding:8px 0"><span style="color:var(--t3);font-size:14px">Subtotal</span><span style="color:var(--t);font-size:14px">₹${tot}</span></div><div style="display:flex;justify-content:space-between;padding:8px 0"><span style="color:var(--t3);font-size:14px">Loyalty Discount (15%)</span><span style="color:var(--gr);font-size:14px">−₹${disc}</span></div><div style="display:flex;justify-content:space-between;padding-top:14px;margin-top:8px;border-top:1px solid var(--bd)"><span style="color:var(--t);font-size:17px;font-weight:600">Total</span><span style="color:var(--g);font-size:24px;font-weight:800;font-family:var(--fd)">₹${tot-disc}</span></div></div><button class="btn btn-g" style="margin-top:16px" onclick="demoFoodOrder()">Order to My Station</button>`}h+='</div>';el.innerHTML=h;ic();return}
+  let h=`<div style="padding:16px 20px 100px"><div class="fheader"><div class="sec-title anim-up"><h2>Food & Drinks</h2><p>Delivered to your station</p></div>${cnt>0?`<div class="cart-badge anim-up" onclick="render.food(true);ic()"><i data-lucide="shopping-cart" style="width:16px;height:16px;color:var(--g)"></i><span>${cnt} · ₹${tot}</span></div>`:''}</div><div class="pills anim-up d1">${Object.keys(M).map(c=>`<button class="pill${fCat===c?' on':''}" onclick="fCat='${c}';render.food();ic()">${c}</button>`).join('')}</div>`;
+  M[fCat].forEach((x,i)=>{const q=fCart[x.id]||0;h+=`<div class="fitem anim-up d${Math.min(i+1,6)}"><div class="finfo"><div class="fname"><span>${x.n}</span>${x.t?`<span class="chip ${x.t==='Bestseller'?'cr':'cg'}">${x.t}</span>`:''}</div><div class="fsub">${x.s}</div><div class="fprice">₹${x.p}</div></div>${q?`<div class="qty"><button onclick="fCart['${x.id}']--;if(fCart['${x.id}']<=0)delete fCart['${x.id}'];render.food();ic()"><i data-lucide="minus" style="width:16px;height:16px"></i></button><span class="qn">${q}</span><button class="plus" onclick="fCart['${x.id}']=(fCart['${x.id}']||0)+1;render.food();ic()"><i data-lucide="plus" style="width:16px;height:16px"></i></button></div>`:`<button class="btn btn-os" onclick="fCart['${x.id}']=1;render.food();ic()">Add</button>`}</div>`});
+  h+='</div>';el.innerHTML=h;
+};
+
+render.community=()=>{
+  const el=document.getElementById('pg-community'),ch=CH.find(c=>c.id===cCh),ms=cMsgs[cCh]||[];
+  let h=`<div class="chatwrap" style="position:relative"><div class="chhead"><button style="background:none;padding:0;display:flex;color:var(--t2)" onclick="cSide=!cSide;render.community();ic()"><i data-lucide="${cSide?'x':'menu'}" style="width:20px;height:20px"></i></button><div style="flex:1"><div class="chname"><span class="hash"># </span>${ch?.n}</div><div class="chdesc">${ch?.d}</div></div><div style="display:flex;align-items:center;gap:4px;color:var(--t3)"><i data-lucide="users" style="width:16px;height:16px"></i><span style="font-size:12px">27</span></div></div>`;
+  if(cSide)h+=`<div class="chside open"><div style="display:flex;justify-content:space-between;align-items:center;padding:0 20px 12px"><span class="chltitle">Channels</span><button style="background:none;padding:0;color:var(--t3);display:flex" onclick="cSide=false;render.community();ic()"><i data-lucide="x" style="width:18px;height:18px"></i></button></div>${CH.map(c=>`<div class="chi${cCh===c.id?' on':''}" onclick="cCh='${c.id}';cSide=false;render.community();ic()"><i data-lucide="hash" style="width:16px;height:16px;color:${cCh===c.id?'var(--g)':'var(--t3)'}"></i><span class="chl">${c.n}</span>${c.u?`<span class="chur">${c.u}</span>`:''}</div>`).join('')}</div>`;
+  h+=`<div class="chmsgs" id="cMs">`;ms.forEach(m=>{h+=`<div class="mrow${m.me?' me':''}"><div class="mav" style="background:${m.c}18;border:1px solid ${m.c}30;color:${m.c}">${m.u[0]}</div><div class="mbody"><div class="mmeta"><span class="muser${m.a?' admin':''}" style="color:${m.c}">${m.u}${m.a?' ✦':''}</span><span class="mtime">${m.t}</span></div><div class="mbub">${m.m}</div></div></div>`});
+  h+=`</div><div class="chinput"><input class="chinp" id="cInp" placeholder="Message #${ch?.n}..." onkeydown="if(event.key==='Enter')sendChat()"><button class="chsend" id="cSnd" onclick="sendChat()"><i data-lucide="send" style="width:18px;height:18px"></i></button></div></div>`;
+  el.innerHTML=h;ic();const ms2=document.getElementById('cMs');if(ms2)ms2.scrollTop=ms2.scrollHeight;
+  const inp=document.getElementById('cInp');if(inp)inp.addEventListener('input',()=>{document.getElementById('cSnd').className=inp.value.trim()?'chsend on':'chsend'});
+};
+function sendChat(){const inp=document.getElementById('cInp');if(!inp||!inp.value.trim())return;const now=new Date().toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit',hour12:true}).toUpperCase();if(!cMsgs[cCh])cMsgs[cCh]=[];cMsgs[cCh].push({u:'RS',m:inp.value.trim(),t:now,c:'#c8a84c',me:true});render.community();ic()}
+
+render.shop=()=>{
+  const el=document.getElementById('pg-shop'),cats=['All','Gear','Manga','Merch'],filt=sCat==='All'?SI:SI.filter(i=>i.c===sCat),cnt=sCC(),tot=sCT();
+  if(sDet){const d=sDet;el.innerHTML=`<div style="padding:16px 20px 100px"><button class="detail-back anim-up" onclick="sDet=null;render.shop();ic()"><i data-lucide="arrow-left" style="width:18px;height:18px"></i> Back to Shop</button><div class="detail-hero anim-scale"><i data-lucide="${d.i}" style="width:64px;height:64px;color:var(--g)"></i></div><div class="anim-up d2" style="display:flex;gap:8px;margin-bottom:10px"><span class="chip" style="background:${catCol(d.c)}18;color:${catCol(d.c)}">${d.c}</span><span class="chip cgr">In Stock</span></div><h2 class="anim-up d2" style="font-family:var(--fd);font-size:24px;font-weight:700;margin-bottom:6px">${d.n}</h2><p class="anim-up d3" style="color:var(--t3);font-size:14px;margin-bottom:16px;line-height:1.6">${d.s}</p><div class="anim-up d3" style="display:flex;align-items:center;gap:6px;margin-bottom:24px"><i data-lucide="star" style="width:14px;height:14px;color:var(--g);fill:var(--g)"></i><span style="color:var(--g);font-size:14px;font-weight:600">${d.r}</span><span style="color:var(--t3);font-size:13px">(${d.rv} reviews)</span></div><div class="anim-up d4" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px"><span style="color:var(--g);font-size:32px;font-weight:800;font-family:var(--fd)">₹${d.p.toLocaleString()}</span>${d.p>=999?'<span class="chip cgr">Free Delivery</span>':''}</div><button class="btn btn-g anim-up d5" onclick="sCart['${d.id}']=(sCart['${d.id}']||0)+1;render.shop();ic()">Add to Cart</button><button class="btn btn-go anim-up d6" style="margin-top:10px">Buy Now</button></div>`;ic();return}
+  let h=`<div style="padding:16px 20px 100px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div class="sec-title anim-up"><h2>Razz Store</h2><p>Gaming gear, manga & more</p></div>${cnt>0?`<div class="anim-up" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:12px;background:var(--gd);border:1px solid rgba(200,168,76,.15)"><i data-lucide="shopping-bag" style="width:14px;height:14px;color:var(--g)"></i><span style="color:var(--g);font-weight:700;font-size:13px;font-family:var(--fd)">${cnt} · ₹${tot.toLocaleString()}</span></div>`:''}</div><div class="pills anim-up d1">${cats.map(c=>`<button class="pill${sCat===c?' on':''}" onclick="sCat='${c}';render.shop();ic()">${c}</button>`).join('')}</div><div class="sgrid">`;
+  filt.forEach((x,i)=>{h+=`<div class="card scard2 anim-up d${Math.min(i%4+2,6)}" onclick="sDet=SI.find(i=>i.id==='${x.id}');render.shop();ic()"><div class="siw"><i data-lucide="${x.i}" style="width:32px;height:32px;color:${catCol(x.c)}"></i></div><span class="chip" style="background:${catCol(x.c)}18;color:${catCol(x.c)}">${x.c}</span><div class="sn">${x.n}</div><div class="smeta"><span class="sp">₹${x.p.toLocaleString()}</span><span class="sr"><i data-lucide="star" style="width:11px;height:11px;color:var(--g);fill:var(--g)"></i> ${x.r}</span></div></div>`});
+  h+='</div></div>';el.innerHTML=h;
+};
+
+render.loyalty=()=>{
+  const el=document.getElementById('pg-loyalty'),pts=1820,tier=TIERS.find(t=>pts>=t.mn&&pts<=t.mx),next=TIERS[TIERS.indexOf(tier)+1],pct=next?((pts-tier.mn)/(next.mn-tier.mn))*100:100;
+  const rw=[{n:'Free Shake',c:150,i:'coffee'},{n:'1hr Free Gaming',c:400,i:'gamepad-2'},{n:'20% Merch Off',c:300,i:'tag'},{n:'Tournament Entry',c:500,i:'trophy'}];
+  const hy=[{l:'2hr PC Session',p:'+80',d:'Today',e:1},{l:'Redeemed: Free Shake',p:'−150',d:'Yesterday',e:0},{l:'3hr PS5 Session',p:'+120',d:'Feb 28',e:1},{l:'Tournament Bonus',p:'+200',d:'Feb 25',e:1}];
+  let h=`<div style="padding:16px 20px 100px"><div class="card glow anim-scale" style="margin-bottom:24px;overflow:hidden;position:relative"><div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,${tier.c}15,transparent)"></div><div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;position:relative"><div class="ib" style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,${tier.c}25,${tier.c}08);border:1.5px solid ${tier.c}40"><i data-lucide="crown" style="width:28px;height:28px;color:${tier.c}"></i></div><div><div style="color:${tier.c};font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;font-family:var(--fd)">${tier.n}</div><div style="display:flex;align-items:baseline;gap:6px"><span style="color:var(--t);font-size:32px;font-weight:800;font-family:var(--fd);line-height:1">${pts.toLocaleString()}</span><span style="color:var(--t3);font-size:13px">pts</span></div></div></div>${next?`<div style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;color:var(--t3)">Progress to ${next.n}</span><span style="font-size:12px;color:${tier.c};font-weight:600">${next.mn-pts} pts away</span></div><div class="ptrack"><div class="pfill" style="width:${pct}%;background:linear-gradient(90deg,${tier.c},${tier.c}aa)"></div></div></div>`:''}<div class="tstats">${[['48','Hours'],['12','Sessions'],['3','Rewards']].map(([v,l])=>`<div class="tstat"><div class="tsn">${v}</div><div class="tsl">${l}</div></div>`).join('')}</div></div>`;
+  h+=`<div class="sec-title anim-up d1"><h2>RS Perks</h2><p>Current tier benefits</p></div><div class="anim-up d2" style="margin-bottom:28px">${tier.pk.map(p=>`<span class="ptag" style="background:${tier.c}12;border:1px solid ${tier.c}20;color:${tier.c}"><i data-lucide="check" style="width:12px;height:12px;margin-right:2px"></i> ${p}</span>`).join('')}</div>`;
+  h+=`<div class="sec-title anim-up d3"><h2>Rewards</h2><p>Spend your points</p></div><div class="rgrid">${rw.map((r,i)=>`<div class="card rcard anim-up d${Math.min(i+3,6)}"><div class="ib ib-m" style="background:var(--el);margin:0 auto 10px"><i data-lucide="${r.i}" style="width:22px;height:22px;color:${pts>=r.c?'var(--g)':'var(--t3)'}"></i></div><div style="color:var(--t);font-size:13px;font-weight:600;margin-bottom:4px">${r.n}</div><div style="color:var(--g);font-size:14px;font-weight:700;margin-bottom:10px;font-family:var(--fd)">${r.c} pts</div><button class="btn ${pts>=r.c?'btn-gs':'btn-os'}" style="width:100%;font-size:12px;${pts<r.c?'opacity:.4;pointer-events:none':''}" ${pts>=r.c?`onclick="redeemReward('${r.n}',${r.c})"`:''}>${pts>=r.c?'Redeem':'Locked'}</button></div>`).join('')}</div>`;
+  h+=`<div class="sec-title anim-up d5"><h2>History</h2><p>Recent activity</p></div>${hy.map((x,i)=>`<div class="hi anim-up d${Math.min(i+4,6)}"><div class="ib ib-s" style="background:${x.e?'var(--grd)':'var(--acd)'}"><i data-lucide="${x.e?'trending-up':'gift'}" style="width:16px;height:16px;color:${x.e?'var(--gr)':'var(--ac)'}"></i></div><div class="hi-info"><div class="hi-l">${x.l}</div><div class="hi-d">${x.d}</div></div><span class="hi-p ${x.e?'e':'s'}">${x.p}</span></div>`).join('')}</div>`;
+  el.innerHTML=h;
+};
+
+render.chatbot=()=>{
+  const el=document.getElementById('pg-chatbot');
+  let h=`<div class="botwrap"><div class="bothead"><div class="botav"><i data-lucide="bot" style="width:22px;height:22px"></i></div><div><div style="color:var(--t);font-weight:600;font-size:16px;font-family:var(--fd)">RazzBot</div><div class="botstatus"><span class="dot"></span><span>Live · Claude AI</span></div></div></div><div class="botmsgs" id="bMs">`;
+  botMsgs.forEach(m=>{if(m.role==='assistant')h+=`<div class="bmsg"><div class="bmav"><i data-lucide="bot" style="width:16px;height:16px"></i></div><div class="bmbub">${m.content.replace(/\n/g,'<br>')}</div></div>`;else h+=`<div class="bmsg u"><div class="bmbub">${m.content}</div></div>`});
+  if(botLoad)h+=`<div class="bmsg"><div class="bmav"><i data-lucide="bot" style="width:16px;height:16px;color:var(--g)"></i></div><div class="bmbub"><div class="tdots"><span></span><span></span><span></span></div></div></div>`;
+  h+=`</div>`;
+  if(botMsgs.length<=1&&!botLoad)h+=`<div class="bsug">${['Best Valorant agents?','PS5 vs PC for FPS?','Trending games?','Razz tournament info'].map(s=>`<div class="bsi" onclick="sendBot('${s}')">${s}</div>`).join('')}</div>`;
+  h+=`<div class="botbar"><input class="botinp" id="bInp" placeholder="Ask anything about gaming..." onkeydown="if(event.key==='Enter')sendBot()"><button class="botsend" id="bSnd" onclick="sendBot()"><i data-lucide="send" style="width:18px;height:18px"></i></button></div></div>`;
+  el.innerHTML=h;ic();const ms=document.getElementById('bMs');if(ms)ms.scrollTop=ms.scrollHeight;
+  const inp=document.getElementById('bInp');if(inp)inp.addEventListener('input',()=>{document.getElementById('bSnd').className=inp.value.trim()?'botsend on':'botsend'});
+};
+
+// Smart fake responses mapped to keywords for realistic demo
+const botDB=[
+{k:['valorant','valo','agent','agents'],r:`Great question! For <strong>ranked Valorant</strong>, here are my top picks:<br><br><strong>Beginners:</strong> Sage (easy heals + wall), Phoenix (self-sufficient fragger), Sova (recon without mechanical skill).<br><br><strong>Climbing ranked:</strong> Omen is incredibly versatile — smokes, teleport, and paranoia give you solo carry potential.<br><br>Pro tip: At Razz, our 240Hz monitors make a huge difference for flick shots. Book a PC session and feel the difference yourself! We also run <strong>weekly Valo tournaments</strong> every Saturday at 4 PM with ₹5,000 prize pools.`},
+{k:['ps5','pc','versus','vs','fps','competitive'],r:`Good debate! Here's the honest breakdown:<br><br><strong>PC at Razz (RTX 4070 Ti):</strong> 240Hz refresh rate, faster response time, keyboard+mouse precision — objectively better for competitive FPS like Valorant & CS2.<br><br><strong>PS5 at Razz (4K OLED):</strong> Stunning for story-driven games, exclusives like Spider-Man 2 & God of War. The DualSense haptics are incredible for immersion.<br><br><strong>Verdict:</strong> Competitive FPS → PC. Everything else → depends on preference. You can try both at Razz — PC at ₹120/hr and PS5 at ₹100/hr!`},
+{k:['trending','popular','games','new','play','what should'],r:`Here's what's hot right now at Razz:<br><br><strong>PC:</strong> Valorant (still king), CS2, Marvel Rivals, Elden Ring DLC, and Deadlock is gaining hype.<br><br><strong>PS5:</strong> Astro Bot, Black Myth: Wukong, Spider-Man 2, and GTA Online is always packed.<br><br><strong>Racing Sim:</strong> Gran Turismo 7 and F1 24 — our Logitech G29 setup is next-level.<br><br>Most of our regulars are grinding Valorant ranked right now. Come by and see what the community is playing!`},
+{k:['tournament','tourney','compete','prize','competition'],r:`We run <strong>weekly tournaments</strong> at Razz! Here's the rundown:<br><br><strong>Valorant Weekly:</strong> Every Saturday at 4 PM. ₹5,000 prize pool + 10 hours of free gaming for the winning team. 5v5 format, register at the counter or DM us on Instagram.<br><br><strong>How to join:</strong> Form a squad of 5, register by Friday evening. Entry is free for Elite & Legendary loyalty members!<br><br>We're also planning a <strong>CS2 monthly cup</strong> soon. Follow @razzgamingstudio on Instagram for announcements.`},
+{k:['book','slot','station','reserve','available','timing','open'],r:`Booking at Razz is easy! Here are your options:<br><br><strong>Gaming PCs:</strong> ₹120/hr — RTX 4070 Ti, 240Hz, i7-13700K. 12 stations, usually 4-5 open on weekdays.<br><br><strong>PS5 Consoles:</strong> ₹100/hr — 4K HDR on 65" OLED with DualSense. 6 stations.<br><br><strong>Racing Sim:</strong> ₹200/hr — Logitech G29 with triple monitor. 2 stations, book early!<br><br><strong>Hours:</strong> 10:30 AM – 10:30 PM daily. You can book right from this app using the <strong>Book Session</strong> tab, or DM us on Instagram @razzgamingstudio.`},
+{k:['food','eat','snack','drink','menu','hungry','order'],r:`Fuel up without leaving your station! Here are the highlights:<br><br><strong>Top picks:</strong> Loaded Nachos (₹149), BBQ Wings (₹199), and the Gamer Combo (₹299 — snack + drink, best value).<br><br><strong>Drinks:</strong> Red Bull for clutch moments (₹125), Oreo Shake (₹149), Iced Coffee (₹99).<br><br>Everything is delivered right to your gaming station. Plus, with your <strong>Elite tier</strong>, you get 15% off all food orders! Order from the <strong>Food & Drinks</strong> tab.`},
+{k:['loyalty','points','rewards','tier','elite','level'],r:`You're currently at <strong>Elite tier</strong> with 1,820 points — nice!<br><br><strong>Your perks:</strong> 15% off everything, 1 free hour per month, and free tournament entry.<br><br><strong>How to earn:</strong> 40 points per hour of gaming, bonus points for tournaments and referrals.<br><br><strong>Next tier (Legendary):</strong> You need 2,180 more points. That's about 55 more hours of gaming. Legendary gets you 20% off, 3 free hours/month, VIP station access, and exclusive merch drops!`},
+{k:['price','cost','rate','how much','expensive','cheap'],r:`Here's the full pricing at Razz:<br><br><strong>Gaming PC:</strong> ₹120/hr (RTX 4070 Ti, 240Hz)<br><strong>PS5 Console:</strong> ₹100/hr (4K OLED, DualSense)<br><strong>Racing Sim:</strong> ₹200/hr (Logitech G29, triple screen)<br><br>Longer sessions are better value — and with your Elite loyalty discount (15% off), it's even more affordable. We also run special offers on weekday mornings!`},
+{k:['location','where','address','direction','reach','how to get'],r:`We're easy to find!<br><br><strong>Address:</strong> 108-109 & 203-204, Agarwal Towers, Ajanta Market, IP Extension, Delhi 92.<br><br><strong>Hours:</strong> 10:30 AM – 10:30 PM, 7 days a week.<br><br><strong>Contact:</strong> +91 7982852018 or email razzgamingip@gmail.com.<br><br>Nearest metro is IP Extension. You can also DM us on Instagram @razzgamingstudio or join our WhatsApp community for directions!`},
+{k:['hello','hi','hey','sup','yo','what\'s up'],r:`Hey there! Welcome to RazzBot. I'm your gaming concierge at Razz Gaming Studio.<br><br>I can help you with game tips & strategies, recommend titles, share esports updates, or tell you anything about Razz — booking, food, tournaments, loyalty rewards, you name it.<br><br>What's on your mind?`},
+{k:['elden ring','souls','fromsoftware','dark souls'],r:`Ah, a fellow Tarnished! <strong>Elden Ring</strong> is incredible on our RTX 4070 Ti PCs — buttery smooth at max settings.<br><br><strong>Tips:</strong> If you're stuck, try leveling Vigor to 40 before anything else. The Mimic Tear ash is still the best summon for tough bosses. For the DLC (Shadow of the Erdtree), make sure to collect Scadutree Fragments — the difficulty scaling is real.<br><br>A few of our regulars run co-op sessions here on weekends. Check the <strong>Community</strong> tab to find fellow Souls players!`},
+{k:['gta','gta6','grand theft auto'],r:`GTA is always a vibe at Razz! <strong>GTA Online</strong> runs great on our PCs, and the PS5 version looks stunning on our 65" OLEDs.<br><br>As for <strong>GTA 6</strong> — the hype is massive. We'll definitely be hosting launch day events when it drops. Follow us on Instagram to stay in the loop!<br><br>Right now, a lot of our PS5 players are running GTA Online heists. Hop in and find a crew in the Community chat!`}
+];
+const botFallback=`That's a great question! I'm still learning, but here's what I can help with:<br><br>• <strong>Game tips</strong> — Valorant, CS2, Elden Ring, and more<br>• <strong>Razz info</strong> — booking, pricing, food menu, tournaments<br>• <strong>Recommendations</strong> — what to play, best setups<br>• <strong>Loyalty</strong> — your points, tier perks, rewards<br><br>Try asking me something specific and I'll do my best!`;
+
+async function sendBot(text){
+  const inp=document.getElementById('bInp'),msg=text||(inp?inp.value.trim():'');
+  if(!msg||botLoad)return;if(inp)inp.value='';
+  botMsgs.push({role:'user',content:msg});botLoad=true;render.chatbot();ic();
+  
+  // Simulate realistic typing delay (800-1800ms)
+  const delay=800+Math.random()*1000;
+  await new Promise(r=>setTimeout(r,delay));
+  
+  // Smart keyword matching
+  const low=msg.toLowerCase();
+  const match=botDB.find(e=>e.k.some(k=>low.includes(k)));
+  const reply=match?match.r:botFallback;
+  
+  botMsgs.push({role:'assistant',content:reply});
+  botLoad=false;render.chatbot();ic();
+}
+
+// ═══ INIT ═══
+document.addEventListener('DOMContentLoaded',()=>{
+  ic();
+  setTimeout(()=>{document.getElementById('splashBar').style.width='100%'},300);
+  setTimeout(()=>{
+    document.getElementById('splash').classList.add('hide');
+    document.getElementById('loginScreen').classList.add('show');
+    ic();
+  },2200);
+});
+</script>
+</div>
+</div>
+</body>
+</html>
